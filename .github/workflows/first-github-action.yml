@@ -1,4 +1,4 @@
-name: .NET Build Check
+﻿name: .NET Build Check
 
 on:
   pull_request:
@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,10 +15,25 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x' # Adjust to your project's .NET version
+          dotnet-version: '7.0.x'
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build project
         run: dotnet build --no-restore --configuration Release
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Send Discord Notification
+        env:
+          # 🔹 Aquí debes poner tu URL de webhook de Discord
+          WEBHOOK_URL: https://discordapp.com/api/webhooks/1415024416106221578/ffahiWsb5QXjw02G5qUeh1R3_2psKJsAul38-CPZkmxdC8ZnymbXUiXpOiG5s1XrLgTb
+          BUILD_STATUS: ${{ job.status }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"Build para PR ${{ github.event.pull_request.number }} terminó con estado: $BUILD_STATUS\"}" \
+               $WEBHOOK_URL
