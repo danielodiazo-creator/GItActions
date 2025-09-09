@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include=".github\pull_request-template.md" />
     <None Include=".github\workflows\first-github-action.yml" />
   </ItemGroup>
 
